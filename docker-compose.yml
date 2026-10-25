@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  # MongoDB database
+  mongo:
+    image: mongo:7-jammy
+    container_name: devboard-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    environment:
+      - MONGO_INITDB_DATABASE=devboard
+    networks:
+      - devboard-network
+
+  # Redis cache (optional, with fallback)
+  redis:
+    image: redis:7-alpine
+    container_name: devboard-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - devboard-network
+
+  # Backend Server
+  server:
+    build:
+      context: ./server
+      dockerfile: ../docker/Dockerfile.server
+    container_name: devboard-server
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=production
+      - PORT=5000
+      - CLIENT_URL=http://localhost:3000
+      - MONGODB_URI=mongodb://mongo:27017/devboard
+      - REDIS_URL=redis://redis:6379
+      - JWT_ACCESS_SECRET=docker_jwt_access_secret_sample_key_12345
+      - JWT_REFRESH_SECRET=docker_jwt_refresh_secret_sample_key_67890
+    depends_on:
+      - mongo
+      - redis
+    networks:
+      - devboard-network
+
+  # Frontend Client
+  client:
+    build:
+      context: ./client
+      dockerfile: ../docker/Dockerfile.client
+    container_name: devboard-client
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      - server
+    networks:
+      - devboard-network
+
+volumes:
+  mongo-data:
+  redis-data:
+
+networks:
+  devboard-network:
+    driver: bridge

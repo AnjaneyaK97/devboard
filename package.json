@@ -1,0 +1,27 @@
+{
+  "name": "devboard",
+  "version": "1.0.0",
+  "description": "Production-grade full-stack job board platform (MERN)",
+  "private": true,
+  "scripts": {
+    "dev:server": "npm --prefix server run dev",
+    "dev:client": "npm --prefix client run dev",
+    "seed": "npm --prefix server run seed",
+    "test:server": "npm --prefix server test",
+    "test:client": "npm --prefix client test -- --run",
+    "test": "npm run test:client && npm run test:server",
+    "build:client": "npm --prefix client run build",
+    "build": "npm run build:client"
+  },
+  "keywords": [
+    "job-board",
+    "mern",
+    "react",
+    "nodejs",
+    "mongodb",
+    "socketio",
+    "fullstack"
+  ],
+  "author": "DevBoard Team",
+  "license": "MIT"
+}
