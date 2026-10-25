@@ -39,11 +39,12 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=5000
-      - CLIENT_URL=http://localhost:3000
-      - MONGODB_URI=mongodb://mongo:27017/devboard
-      - REDIS_URL=redis://redis:6379
-      - JWT_ACCESS_SECRET=docker_jwt_access_secret_sample_key_12345
-      - JWT_REFRESH_SECRET=docker_jwt_refresh_secret_sample_key_67890
+      - CLIENT_URL=${CLIENT_URL:-http://localhost:3000}
+      - MONGODB_URI=${MONGODB_URI:-mongodb://mongo:27017/devboard}
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379}
+      - JWT_ACCESS_SECRET=${JWT_ACCESS_SECRET:?JWT_ACCESS_SECRET must be set}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET:?JWT_REFRESH_SECRET must be set}
+      - COOKIE_SECRET=${COOKIE_SECRET:?COOKIE_SECRET must be set}
     depends_on:
       - mongo
       - redis
@@ -53,8 +54,8 @@ services:
   # Frontend Client
   client:
     build:
-      context: ./client
-      dockerfile: ../docker/Dockerfile.client
+      context: .
+      dockerfile: docker/Dockerfile.client
     container_name: devboard-client
     restart: unless-stopped
     ports:
