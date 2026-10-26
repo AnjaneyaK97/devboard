@@ -17,6 +17,7 @@ import { sanitizeInput } from './middleware/sanitize.middleware.js';
 import apiRoutes from './routes/index.js';
 
 const app = express();
+app.set('trust proxy', 1);
 
 // 1. Correlation Request ID Middleware
 app.use((req, res, next) => {
